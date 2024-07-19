@@ -15,7 +15,6 @@ from dotenv import load_dotenv
 # Optional: add contact me email functionality (Day 60)
 # import smtplib
 
-
 '''
 Make sure the required packages are installed: 
 Open the Terminal in PyCharm (bottom left). 
@@ -31,7 +30,7 @@ This will install the packages from the requirements.txt for this project.
 load_dotenv()
 
 app = Flask(__name__)
-# app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
+# Use environment variable for SECRET_KEY
 app.config['SECRET_KEY'] = os.environ.get('FLASKKEY')
 ckeditor = CKEditor(app)
 Bootstrap5(app)
@@ -61,7 +60,7 @@ class Base(DeclarativeBase):
     pass
 
 print("DB_URI:", os.environ.get('DB_URI'))
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///posts.db'
+# Use environment variable for DATABASE_URI
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_URI', 'sqlite:///default.db')
 
 print(os.environ.get('DB_URI', 'sqlite:///default.db'))
@@ -308,4 +307,5 @@ def contact():
 
 
 if __name__ == "__main__":
-    app.run(debug=False, port=5001)
+    # Use host='0.0.0.0' to ensure the app is accessible in the Azure environment
+    app.run(debug=False, port=5001, host='0.0.0.0')

@@ -59,10 +59,9 @@ gravatar = Gravatar(app,
 class Base(DeclarativeBase):
     pass
 
-print("DB_URI:", os.environ.get('DB_URI'))
 # Use environment variable for DATABASE_URI
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_URI', 'sqlite:///default.db')
-
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 print(os.environ.get('DB_URI', 'sqlite:///default.db'))
 
 db = SQLAlchemy(model_class=Base)

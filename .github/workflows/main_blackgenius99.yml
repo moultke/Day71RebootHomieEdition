@@ -23,7 +23,7 @@ jobs:
           python-version: '3.10'
 
       - name: Install unixodbc-dev
-        run: sudo apt-get install unixodbc-dev
+        run: sudo apt-get install -y unixodbc-dev
 
       - name: Create and start virtual environment
         run: |
@@ -32,21 +32,21 @@ jobs:
 
       - name: Install dependencies
         run: |
+          source venv/bin/activate
           pip install --upgrade pip
           pip install -r requirements.txt
 
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
 
       - name: Zip artifact for deployment
-        run: zip release.zip ./* -r
+        run: |
+          zip -r release.zip ./*
 
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v4
         with:
           name: python-app
-          path: |
-            release.zip
-            !venv/
+          path: release.zip
 
   deploy:
     runs-on: ubuntu-latest
@@ -69,4 +69,15 @@ jobs:
         id: deploy-to-webapp
         with:
           app-name: 'blackgenius99'
+          slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_96D44954ED6E4A1987F4031B5B488B45 }}
+
+      - name: Set environment variables
+        run: |
+          echo "WEBSITES_PORT=8000" >> $GITHUB_ENV
+          echo "DB_CONNECTION_STRING=${{ secrets.DB_CONNECTION_STRING }}" >> $GITHUB_ENV
+
+      - name: Start the application
+        run: |
+          source venv/bin/activate
+          gunicorn --bind=0.0.0.0:8000 --timeout 600 wsgi:app

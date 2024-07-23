@@ -1,4 +1,4 @@
-# Docs forthe Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 # More info on Python, GitHub Actions, and Azure App Service: https://aka.ms/python-webapps-actions
 
@@ -64,6 +64,11 @@ jobs:
       - name: Unzip artifact for deployment
         run: unzip release.zip
 
+      - name: Set environment variables
+        run: |
+          echo "WEBSITES_PORT=8000" >> $GITHUB_ENV
+          echo "DB_URI=${{ secrets.DB_URI }}" >> $GITHUB_ENV
+
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
@@ -72,13 +77,7 @@ jobs:
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_96D44954ED6E4A1987F4031B5B488B45 }}
 
-      - name: Set environment variables
-        run: |
-          echo "WEBSITES_PORT=8000" >> $GITHUB_ENV
-          echo "DB_CONNECTION_STRING=${{ secrets.DB_CONNECTION_STRING }}" >> $GITHUB_ENV
-
       - name: Start the application
         run: |
           source venv/bin/activate
           gunicorn --bind=0.0.0.0:8000 --timeout 600 wsgi:app
-

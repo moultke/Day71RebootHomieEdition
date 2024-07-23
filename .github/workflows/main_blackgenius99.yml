@@ -22,14 +22,19 @@ jobs:
         with:
           python-version: '3.10'
 
+      - name: Install unixodbc-dev
+        run: sudo apt-get install unixodbc-dev
+
       - name: Create and start virtual environment
         run: |
           python -m venv venv
           source venv/bin/activate
-      
+
       - name: Install dependencies
-        run: pip install -r requirements.txt
-        
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
 
       - name: Zip artifact for deployment
@@ -49,7 +54,7 @@ jobs:
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-    
+
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
@@ -59,11 +64,9 @@ jobs:
       - name: Unzip artifact for deployment
         run: unzip release.zip
 
-      
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
         with:
           app-name: 'blackgenius99'
-          slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_96D44954ED6E4A1987F4031B5B488B45 }}

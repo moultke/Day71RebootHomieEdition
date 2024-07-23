@@ -45,7 +45,7 @@ def load_user(user_id):
     return db.get_or_404(User, user_id)
 
 
-# first time using gravatar
+
 # For adding profile images to the comment section
 gravatar = Gravatar(app,
                     size=100,

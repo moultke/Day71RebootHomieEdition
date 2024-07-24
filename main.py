@@ -14,7 +14,7 @@ import os
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 
-# Load environment variables
+# Load environment variables into application
 load_dotenv()
 
 app = Flask(__name__)

@@ -14,7 +14,7 @@ import os
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 
-# Load environment variables into application
+# Load environment variables into app
 load_dotenv()
 
 app = Flask(__name__)
@@ -46,7 +46,7 @@ class Base(DeclarativeBase):
     pass
 
 # Use environment variable for DATABASE_URI
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_URI', 'sqlite:///default.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_URI')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db_uri = os.getenv('DB_URI')
 engine = create_engine(db_uri)

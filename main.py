@@ -31,7 +31,7 @@ login_manager.init_app(app)
 def load_user(user_id):
     return db.get_or_404(User, user_id)
 
-# For adding profile images to the comment section
+# For add profile images to the comment section
 gravatar = Gravatar(app,
                     size=100,
                     rating='g',

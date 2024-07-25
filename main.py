@@ -12,14 +12,16 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from forms import CreatePostForm, RegisterForm, LoginForm, CommentForm
 import os
 from dotenv import load_dotenv
-from sqlalchemy import create_engine
 
-# Load environment variables into app
+# Load environment variables from .env file
 load_dotenv()
 
 app = Flask(__name__)
-# Use environment variable for SECRET_KEY
-app.config['SECRET_KEY'] = os.environ.get('FLASKKEY')
+# Use environment variables for configuration
+app.config['SECRET_KEY'] = os.getenv('FLASK_KEY')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DB_URI')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 ckeditor = CKEditor(app)
 Bootstrap5(app)
 
@@ -31,7 +33,7 @@ login_manager.init_app(app)
 def load_user(user_id):
     return db.get_or_404(User, user_id)
 
-# For add profile images to the comment section
+# For adding profile images to the comment section
 gravatar = Gravatar(app,
                     size=100,
                     rating='g',
@@ -44,12 +46,6 @@ gravatar = Gravatar(app,
 # CREATE DATABASE
 class Base(DeclarativeBase):
     pass
-
-# Use environment variable for DATABASE_URI
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_URI')
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db_uri = os.getenv('DB_URI')
-engine = create_engine(db_uri)
 
 db = SQLAlchemy(model_class=Base)
 db.init_app(app)
@@ -179,7 +175,7 @@ def add_new_post():
             img_url=form.img_url.data,
             author=current_user,
             date=date.today().strftime("%B %d, %Y")
-        )  # Fixed the closing parenthesis here
+        )
         db.session.add(new_post)
         db.session.commit()
         return redirect(url_for("get_all_posts"))
